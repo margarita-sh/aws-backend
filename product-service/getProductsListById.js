@@ -1,27 +1,73 @@
 'use strict';
-const data = require('./assets/data.json')
+
+const AWS = require('aws-sdk');
+
+const {
+  PRODUCTS_TABLE,
+  STOCKS_TABLE
+} = require('./shared/utils');
+
+AWS.config.update({
+  region: 'us-east-1'
+});
+
+const ddb = new AWS.DynamoDB.DocumentClient;
+
+
+async function getProduct(id) {
+  const result = await ddb
+    .get({
+      TableName: PRODUCTS_TABLE,
+      Key: {
+        id
+      },
+    })
+    .promise();
+
+  return result.Item;
+}
+
+async function getStockByProductId(product_id) {
+  const result = await ddb
+    .get({
+      TableName: STOCKS_TABLE,
+      Key: {
+        product_id
+      },
+    })
+    .promise();
+
+  return result.Item;
+}
 
 module.exports.getProductsById = async (event) => {
   try {
+    console.log('arguments for /products{productId} GET', event);
+
     const productId = event.pathParameters['productId'];
-    const product = data.find((item) => item.id.toString() === productId);
-    if (product) {
+
+    const product = await getProduct(productId);
+    const stock = await getStockByProductId(productId);
+
+    if (product && stock) {
       return {
         statusCode: 200,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': true,
-        },
-        body: JSON.stringify(product),
+        body: JSON.stringify({
+          ...product,
+          count: stock.count
+        }),
       };
     } else {
-      throwError('Error')
+      return {
+        body: JSON.stringify("Product is not found"),
+        statusCode: 404
+      };
     }
   } catch (e) {
     return {
-      statusCode: 404,
+      statusCode: 500,
       body: JSON.stringify({
-        message: "Opps! Product not found verify if id exists."
+        message: "Opps! Something went wrong :(" + e.message
       }),
     };
   }
