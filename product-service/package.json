@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "serverless-auto-swagger": "^2.9.2"
+  }
+}
