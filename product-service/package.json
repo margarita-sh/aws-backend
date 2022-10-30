@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "serverless-auto-swagger": "^2.9.2"
+    "aws-sdk": "^2.1231.0",
+    "serverless-auto-swagger": "^2.9.2",
+    "uuid": "^9.0.0"
   }
 }
