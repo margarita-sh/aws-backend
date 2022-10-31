@@ -1,0 +1,47 @@
+service: import-service
+
+frameworkVersion: '3'
+
+plugins:
+  - serverless-auto-swagger
+
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: dev
+  region: us-east-1
+  environment:
+    UPLOADED_BUCKET: 'shaduryna-5-task'
+  deploymentBucket:
+    name: shaduryna-5-task
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action: "s3:ListBucket"
+      Resource:
+        - "arn:aws:s3:::shaduryna-5-task"
+    - Effect: "Allow"
+      Action: 
+        - "s3:*"
+      Resource:
+        - "arn:aws:s3:::shaduryna-5-task/*"
+
+functions:
+  importProductsFile:
+    handler: importProducts.importProductsFile
+    events:
+      - httpApi:
+          path: /import
+          method: get    
+
+  importFileParser:
+    handler: importFileParser.fileParser
+    events:
+      - s3:
+          bucket: 'shaduryna-5-task'
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: "uploaded/"
+          existing: true
+
+
