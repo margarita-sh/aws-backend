@@ -7,12 +7,37 @@ plugins:
   
 provider:
   name: aws
-  runtime: runtime: nodejs16.x
+  runtime: nodejs16.x
   environment:
     PRODUCTS_TABLE: 'Products_aws_table'
     STOCKS_TABLE: 'Stocks_aws_table'
+    SQS_URL:
+      Ref: catalogItemsQueue
+    SNS_ARN: 
+      Ref: createProductTopicSnS
 
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action: "sns:*"
+      Resource:
+        Ref: createProductTopicSnS 
 
+resources:
+  Resources:
+    catalogItemsQueue:
+     Type: AWS::SQS::Queue
+     Properties:
+       QueueName: catalogItemsQueue-product-service
+    createProductTopicSnS:
+     Type: AWS::SNS::Topic
+     Properties:
+       TopicName: createProductTopicSnS-product-service
+    snsSubscription:
+     Type: AWS::SNS::Subscription
+     Properties: 
+       Endpoint: margaritka1992@gmail.com
+       Protocol: email
+       TopicArn: !Ref 'createProductTopicSnS'
 
 functions:
   getProductsList:
@@ -36,4 +61,12 @@ functions:
           path: /products
           method: post
 
-
+  catalogBatchProcess:
+    handler: catalogBatchProcess.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - catalogItemsQueue
+              - Arn
