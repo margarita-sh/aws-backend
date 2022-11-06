@@ -7,7 +7,7 @@ plugins:
   
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: runtime: nodejs16.x
   environment:
     PRODUCTS_TABLE: 'Products_aws_table'
     STOCKS_TABLE: 'Stocks_aws_table'
