@@ -5,7 +5,6 @@ frameworkVersion: '3'
 plugins:
   - serverless-auto-swagger
 
-
 provider:
   name: aws
   runtime: nodejs16.x
@@ -13,6 +12,7 @@ provider:
   region: us-east-1
   environment:
     UPLOADED_BUCKET: 'shaduryna-5-task'
+    SQS_URL: 'https://sqs.us-east-1.amazonaws.com/348684423546/catalogItemsQueue-product-service'
   deploymentBucket:
     name: shaduryna-5-task
   iamRoleStatements:

@@ -1,3 +1,7 @@
+const {
+    v4: uuidv4
+} = require('uuid');
+
 module.exports.PRODUCTS_TABLE = process.env.PRODUCTS_TABLE
 module.exports.STOCKS_TABLE = process.env.STOCKS_TABLE
 module.exports.createProductObject = (uuidv4, description, img, price, title) => {
@@ -58,4 +62,12 @@ module.exports.insertItems = async (ddb, items) => {
             }
         })
     })
+}
+
+module.exports.prepareAndInsertItem = async (ddb, item) => {
+    const id = uuidv4();
+    const product = exports.createProductObject(id, item.description, '1.jpg', item.price, item.title)
+    const stock = exports.createStocksObject(id, item.count);
+    const preperedObject = exports.createInsertObject(product, stock);
+    return exports.insertItems(ddb, preperedObject);
 }
