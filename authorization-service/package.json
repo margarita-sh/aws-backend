@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@jimdo/serverless-dotenv": "^1.0.0"
+  },
+  "devDependencies": {
+    "serverless-dotenv-plugin": "^4.0.2"
+  }
+}

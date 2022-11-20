@@ -25,6 +25,13 @@ provider:
         - "s3:*"
       Resource:
         - "arn:aws:s3:::shaduryna-5-task/*"
+  httpApi:
+    cors: true
+    authorizers:
+      customAuthorizer:
+        type: request
+        functionArn: arn:aws:lambda:us-east-1:348684423546:function:authorization-service-dev-basicAuthorizer
+        enableSimpleResponses: true
 
 functions:
   importProductsFile:
@@ -33,6 +40,9 @@ functions:
       - httpApi:
           path: /import
           method: get    
+          authorizer:
+            name: customAuthorizer
+            type: request
 
   importFileParser:
     handler: importFileParser.fileParser

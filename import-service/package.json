@@ -7,6 +7,6 @@
     "csv-parser": "^3.0.0"
   },
   "devDependencies": {
-    "serverless-auto-swagger": "^2.10.0"
+    "serverless-auto-swagger": "^2.11.0"
   }
 }
