@@ -1,0 +1,27 @@
+service: serverless-example
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+
+environment: 
+  PGHOST: ${env:PGHOST}
+  PGPORT: ${env:PGPORT}
+  PGDATABASE: ${env:PGDATABASE}
+  PGUSER: ${env:PGUSER}
+  PGPASSWORD: ${env:PGPASSWORD}
+
+functions:
+  main:
+    handler: dist/main.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'
